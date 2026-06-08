@@ -67,6 +67,7 @@ shift-tracker-app/
 ├── package.json
 ├── assets/
     ├── trayIcon.png
+    ├── icon.ico
 └── src/
     ├── time-tracker.html
     ├── time-tracker.css
