@@ -1,95 +1,38 @@
 # Shift Tracker
 
-A system tray app for tracking shift hours. Log your clock-in time and see exactly when you can leave, accounting for your lunch break and a configurable paid-hours goal.
+A lightweight Windows tray app for tracking your shift hours.
 
-## Setup
+## Install
 
-```bash
-npm install
-npm start
-```
+1. Go to the [latest release](https://github.com/nathanstream203/Shift-Tracker/releases/latest)
+2. Download `Shift Tracker Setup x.x.x.exe`
+3. Run the installer
 
-The app icon appears in your system tray. Click it to toggle the popup. Click anywhere outside to dismiss.
+The app starts automatically with Windows and lives in your system tray.
+
+## How it works
+
+Click the tray icon to open the tracker. Enter your clock-in and clock-out times and set your paid hours goal. The app calculates your remaining time and progress automatically.
+
+Your data saves locally and resets each day at midnight.
 
 ## Features
 
-**Clock events**
-- Stamp your morning clock-in with "Now" or type a time manually
-- Start and end a lunch break with a single button (lunch time is excluded from paid hours)
-- Edit lunch start/end times directly via inline time inputs
-
-**Live session**
-- Running clock showing total paid time accumulated
-- Progress bar toward your paid-hours goal with percentage
-- Status indicator: "Clocked in" or "On lunch break"
-
-**Clock-out calculator**
-- Displays the time you need to leave to hit your goal
-- Updates in real time as you add or edit times
-- Shows a warning badge if no lunch has been entered
-- Tray icon tooltip updates to show your target clock-out time
-
-**Goal setting**
-- Configurable paid-hours target (default 8h, supports 0.5h increments)
-
-**Shift metrics**
-- Morning block duration
-- Lunch break duration
-- Afternoon time still needed
-- Total paid time so far
-
-**Reset and undo**
-- "Reset day" clears all entries
-- An "Undo" button appears for 8 seconds after a reset
-
-**Window behavior**
-- Pin button keeps the window visible when you click away
-- Auto-hides on blur when unpinned
-- Launches hidden to tray on login
-- Single instance: clicking the tray on a second launch focuses the existing window
-
-**Input validation**
-- Warns if lunch start is before clock-in or lunch end is before lunch start
+- Stamp clock-in with "Now" or type a time manually
+- Log a lunch break (excluded from paid hours)
+- Live running clock toward your goal with a progress bar
+- Clock-out calculator showing the exact time you need to leave
+- Tray tooltip updates with your target clock-out time
+- Pin button to keep the window open when you click away
+- Reset day with an 8-second undo window
 
 ## Keyboard shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| Alt+1 | Stamp morning clock-in |
-| Alt+L | Toggle lunch start / end |
+| Shortcut | Action                   |
+| -------- | ------------------------ |
+| Alt+1    | Stamp morning clock-in   |
+| Alt+L    | Toggle lunch start / end |
 
-## Build a distributable
+## Updates
 
-```bash
-npm run build
-```
-
-Output goes to `dist/`:
-
-- **Windows** `.exe` installer (NSIS)
-- **macOS** `.dmg`
-- **Linux** `.AppImage`
-
-## Custom icons
-
-**Tray icon:** Replace `assets/trayIcon.png` (16x16 or 32x32, transparent background). On macOS use a black/white PNG so it adapts to light/dark menu bars.
-
-**App icon:** Replace `assets/icon.ico` with a multi-size `.ico` (16, 32, 48, 256px). Delete `dist/` and rebuild.
-
-> Icon changes on existing shortcuts require reinstalling or manually updating via Properties > Change Icon.
-
-## Project structure
-
-```
-shift-tracker-app/
-├── main.js             Electron main process (tray, window, IPC)
-├── preload.js          Context bridge (renderer <-> main)
-├── package.json
-├── assets/
-│   ├── trayIcon.png
-│   └── icon.ico
-└── src/
-    ├── time-tracker.html
-    ├── time-tracker.css
-    └── time-tracker.js
-```
+Updates install automatically in the background. You will get the latest version on next launch with no action required.
