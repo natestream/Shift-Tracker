@@ -9,76 +9,84 @@
 <body>
   <div class="page">
     <header class="header">
-      <div class="header-row">
-        <div>
-          <h1>Shift time tracker</h1>
-          <p class="subtitle">Know exactly when to clock out</p>
+      <div class="header-inner">
+        <div class="header-brand">
+          <svg class="brand-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+          <span class="brand-name">Shift Tracker</span>
         </div>
         <div class="header-actions">
-          <button id="reset-btn" onclick="resetAll()" title="Clear today's data">
-            Reset day
-          </button>
+          <button id="reset-btn" onclick="resetAll()" title="Clear today's data">Reset day</button>
           <button id="close-btn" onclick="window.electronAPI?.closeWindow()" title="Close">✕</button>
         </div>
       </div>
     </header>
 
-    <div id="live-area"></div>
+    <div id="live-area">
+      <div class="session-empty">
+        <div class="session-empty-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <p class="session-empty-title">Not tracking</p>
+        <p class="session-empty-sub">Stamp your morning clock-in time to start</p>
+      </div>
+    </div>
 
     <div class="card">
-      <p class="section-title">Clock events</p>
+      <p class="section-label">Clock Events</p>
 
-      <div class="row">
-        <label class="label" for="in1">Morning clock-in</label>
+      <div class="time-row">
+        <div class="time-row-meta">
+          <span class="time-row-label">Morning clock-in</span>
+        </div>
         <div class="input-group">
           <button class="stamp-btn" onclick="stampNow('in1')" title="Stamp current time">Now</button>
           <input type="time" id="in1" oninput="calc()" />
           <button class="clear-btn" onclick="clearField('in1')" title="Clear">✕</button>
         </div>
       </div>
-      <div class="row">
-        <label class="label" for="out1">
-          Lunch clock-out
-          <span class="badge">unpaid</span>
-        </label>
+
+      <div class="time-row">
+        <div class="time-row-meta">
+          <span class="time-row-label">Lunch clock-out</span>
+          <span class="badge-unpaid">unpaid</span>
+        </div>
         <div class="input-group">
           <button class="stamp-btn" onclick="stampNow('out1')" title="Stamp current time">Now</button>
           <input type="time" id="out1" oninput="calc()" />
           <button class="clear-btn" onclick="clearField('out1')" title="Clear">✕</button>
         </div>
       </div>
-      <div class="row">
-        <label class="label" for="in2">Lunch clock-in</label>
+
+      <div class="time-row" style="margin-bottom:0">
+        <div class="time-row-meta">
+          <span class="time-row-label">Lunch clock-in</span>
+        </div>
         <div class="input-group">
           <button class="stamp-btn" onclick="stampNow('in2')" title="Stamp current time">Now</button>
           <input type="time" id="in2" oninput="calc()" />
           <button class="clear-btn" onclick="clearField('in2')" title="Clear">✕</button>
         </div>
       </div>
+    </div>
 
-      <hr class="divider" />
-      <p class="section-title">Goal</p>
-
-      <div class="row">
-        <label class="label" for="goal">Target paid hours</label>
-        <div class="goal-input">
-          <input type="number" id="goal" value="8" min="1" max="24" step="0.5" oninput="calc()" />
-          <span class="unit">hrs</span>
-        </div>
+    <div class="card goal-card">
+      <span class="time-row-label">Target paid hours</span>
+      <div class="goal-input-row">
+        <input type="number" id="goal" value="8" min="1" max="24" step="0.5" oninput="calc()" />
+        <span class="goal-unit">hrs</span>
       </div>
     </div>
 
-    <div id="result-area">
-      <div class="result">
-        <p class="empty">Enter your morning clock-in time to get started</p>
-      </div>
-    </div>
+    <div id="result-area"></div>
   </div>
 
   <script src="time-tracker.js"></script>
   <script>
-    // Handle hide-window from main process (blur event)
-    // Also wire up close button via preload if running in Electron
     if (window.electronAPI) {
       document.getElementById('close-btn').style.display = 'flex';
     }
