@@ -47,49 +47,19 @@ function fmtTime(totalMins) {
   var normalized = ((totalMins % 1440) + 1440) % 1440;
   var h = Math.floor(normalized / 60);
   var m = Math.round(normalized % 60);
-  if (m === 60) {
-    h++;
-    m = 0;
-  }
+  if (m === 60) { h++; m = 0; }
   var ampm = h >= 12 ? "pm" : "am";
   var h12 = h % 12 === 0 ? 12 : h % 12;
-  return h12 + ":" + String(m).padStart(2, "0") + ampm;
+  return h12 + ":" + String(m).padStart(2, "0") + " " + ampm;
 }
 
-function fmtDuration(mins) {
+function fmtDurationClock(mins) {
   var totalSec = Math.round(mins * 60);
   var h = Math.floor(totalSec / 3600);
   var m = Math.floor((totalSec % 3600) / 60);
   var s = totalSec % 60;
-  if (h > 0)
-    return (
-      h +
-      "h " +
-      String(m).padStart(2, "0") +
-      "m " +
-      String(s).padStart(2, "0") +
-      "s"
-    );
-  return m + "m " + String(s).padStart(2, "0") + "s";
-}
-
-function fmtTimeLeft(mins) {
-  if (mins <= 0) return "Done!";
-  var totalSec = Math.round(mins * 60);
-  var h = Math.floor(totalSec / 3600);
-  var m = Math.floor((totalSec % 3600) / 60);
-  var s = totalSec % 60;
-  if (h > 0)
-    return (
-      h +
-      "h " +
-      String(m).padStart(2, "0") +
-      "m " +
-      String(s).padStart(2, "0") +
-      "s left"
-    );
-  if (m > 0) return m + "m " + String(s).padStart(2, "0") + "s left";
-  return s + "s left";
+  if (h > 0) return h + ":" + String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0");
+  return m + ":" + String(s).padStart(2, "0");
 }
 
 function fmtDurationShort(mins) {
@@ -98,6 +68,17 @@ function fmtDurationShort(mins) {
   if (h === 0) return m + "m";
   if (m === 0) return h + "h";
   return h + "h " + m + "m";
+}
+
+function fmtTimeLeft(mins) {
+  if (mins <= 0) return "Goal reached!";
+  var totalSec = Math.round(mins * 60);
+  var h = Math.floor(totalSec / 3600);
+  var m = Math.floor((totalSec % 3600) / 60);
+  var s = totalSec % 60;
+  if (h > 0) return h + "h " + String(m).padStart(2, "0") + "m left";
+  if (m > 0) return m + "m " + String(s).padStart(2, "0") + "s left";
+  return s + "s left";
 }
 
 function getPaidMinsSoFar(in1, out1, in2, now) {
@@ -114,7 +95,16 @@ function getPaidMinsSoFar(in1, out1, in2, now) {
 function renderLive(in1, out1, in2, goalMins) {
   var area = document.getElementById("live-area");
   if (in1 === null) {
-    area.innerHTML = "";
+    area.innerHTML =
+      '<div class="session-empty">' +
+        '<div class="session-empty-icon">' +
+          '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">' +
+            '<circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>' +
+          '</svg>' +
+        '</div>' +
+        '<p class="session-empty-title">Not tracking</p>' +
+        '<p class="session-empty-sub">Stamp your morning clock-in time to start</p>' +
+      '</div>';
     return;
   }
 
@@ -122,7 +112,7 @@ function renderLive(in1, out1, in2, goalMins) {
   var paidSoFar = getPaidMinsSoFar(in1, out1, in2, now);
   if (paidSoFar === null || paidSoFar < 0) paidSoFar = 0;
 
-  var remaining = Math.max(goalMins - paidSoFar, 0); // <-- new
+  var remaining = Math.max(goalMins - paidSoFar, 0);
   var pct = Math.min((paidSoFar / goalMins) * 100, 100);
   var fillClass = pct >= 100 ? "over" : pct >= 90 ? "warn" : "";
 
@@ -130,47 +120,33 @@ function renderLive(in1, out1, in2, goalMins) {
     (out1 !== null && in2 === null && now > out1) ||
     (out1 !== null && in2 !== null && now > out1 && now < in2);
 
-  var statusLabel = onBreak
-    ? '<span style="color:var(--text-warning)">On lunch break</span>'
-    : '<span class="dot"></span>Clocked in \u2014 tracking live';
+  var statusPill = onBreak
+    ? '<span class="session-status-pill break"><span class="session-dot"></span>On lunch break</span>'
+    : '<span class="session-status-pill active"><span class="session-dot"></span>Clocked in</span>';
+
+  var timerClass = onBreak ? "session-timer break" : "session-timer";
+  var pctLabel = pct >= 100
+    ? '<span style="color:var(--teal);font-weight:600">Goal reached!</span>'
+    : Math.round(pct) + "% of goal";
 
   area.innerHTML =
-    '<div class="live-card">' +
-    '<div class="live-top">' +
-    '<span class="live-label">' +
-    statusLabel +
-    "</span>" +
-    '<span class="live-pct">' +
-    Math.round(pct) +
-    "% of goal</span>" +
-    "</div>" +
-    '<div class="live-ticker-wrap">' +
-    '<div style="flex:1">' +
-    '<p class="live-ticker-label">paid hours so far</p>' +
-    '<p class="live-ticker">' +
-    fmtDuration(paidSoFar) +
-    "</p>" +
-    "</div>" +
-    '<div style="flex:1;text-align:center">' +
-    '<p class="live-ticker-label">' +
-    fmtTimeLeft(remaining) +
-    "</p>" +
-    "</div>" +
-    "</div>" +
-    '<div class="progress-bar">' +
-    '<div class="progress-fill ' +
-    fillClass +
-    '" style="width:' +
-    pct.toFixed(1) +
-    '%"></div>' +
-    "</div>" +
-    '<div class="progress-labels">' +
-    "<span>0h</span>" +
-    "<span>" +
-    (goalMins / 60).toFixed(1) +
-    "h goal</span>" +
-    "</div>" +
-    "</div>";
+    '<div class="session-card">' +
+      '<div class="session-top">' +
+        '<span class="session-heading">Current Session</span>' +
+        statusPill +
+      '</div>' +
+      '<div class="' + timerClass + '">' + fmtDurationClock(paidSoFar) + '</div>' +
+      '<div>' +
+        '<div class="session-progress-bar">' +
+          '<div class="session-progress-fill ' + fillClass + '" style="width:' + pct.toFixed(1) + '%"></div>' +
+        '</div>' +
+        '<div class="session-progress-labels">' +
+          '<span>0h</span>' +
+          '<span>' + pctLabel + '</span>' +
+          '<span>' + (goalMins / 60).toFixed(1) + 'h goal</span>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
 }
 
 function clearField(id) {
@@ -196,9 +172,8 @@ function resetAll() {
     clearInterval(tickInterval);
     tickInterval = null;
   }
-  document.getElementById("live-area").innerHTML = "";
-  document.getElementById("result-area").innerHTML =
-    '<div class="result"><p class="empty">Enter your morning clock-in time to get started</p></div>';
+  renderLive(null, null, null, 480);
+  document.getElementById("result-area").innerHTML = "";
 }
 
 function calc() {
@@ -221,15 +196,11 @@ function calc() {
   var area = document.getElementById("result-area");
 
   if (in1 === null) {
-    area.innerHTML =
-      '<div class="result"><p class="empty">Enter your morning clock-in time to get started</p></div>';
+    area.innerHTML = "";
     return;
   }
 
-  var morningMins = null,
-    breakMins = null,
-    paidSoFar = null,
-    afternoonStart = null;
+  var morningMins = null, breakMins = null, paidSoFar = null, afternoonStart = null;
 
   if (out1 !== null && in2 !== null) {
     morningMins = out1 - in1;
@@ -244,60 +215,55 @@ function calc() {
   }
 
   var remainingMins = goalMins - (paidSoFar || 0);
-  var clockOutMins = null,
-    status = "";
+  var clockOutMins = null, noLunch = false;
 
   if (afternoonStart !== null) {
     clockOutMins = afternoonStart + remainingMins;
   } else if (out1 === null) {
     clockOutMins = in1 + goalMins;
-    status = "no-lunch";
+    noLunch = true;
   }
 
-  var html = '<div class="result">';
+  var html = '<div class="result-card">';
+  html += '<div class="result-header">';
+  html += '<span class="result-section-label">Clock out</span>';
+  if (clockOutMins !== null) {
+    html += noLunch
+      ? '<span class="result-badge-warn">No lunch entered</span>'
+      : '<span class="result-badge-ok">On track</span>';
+  }
+  html += '</div>';
 
   if (clockOutMins !== null) {
-    html += '<p class="result-label">Clock out at</p>';
-    html += '<p class="result-time">' + fmtTime(clockOutMins) + "</p>";
-    if (status === "no-lunch") {
-      html +=
-        '<p class="result-sub status-warn">No lunch break entered \u2014 straight ' +
-        goalHrs +
-        "h from clock-in</p>";
-    } else {
-      html +=
-        '<p class="result-sub status-ok">to hit ' +
-        goalHrs +
-        " paid hours today</p>";
-    }
+    html +=
+      '<div class="result-clockout">' +
+        '<span class="result-clockout-label">Leave at</span>' +
+        '<span class="result-clockout-time">' + fmtTime(clockOutMins) + '</span>' +
+      '</div>';
   }
+  html += '</div>';
 
-  html += '<div class="metrics">';
-  if (morningMins !== null) {
-    html +=
-      '<div class="metric"><p class="metric-label">Morning block</p><p class="metric-val">' +
-      fmtDurationShort(morningMins) +
-      "</p></div>";
+  var metrics = [];
+  if (morningMins !== null)
+    metrics.push(['Morning block', fmtDurationShort(morningMins)]);
+  if (breakMins !== null)
+    metrics.push(['Lunch break', fmtDurationShort(breakMins)]);
+  if (afternoonStart !== null)
+    metrics.push(['Afternoon needed', fmtDurationShort(remainingMins)]);
+  if (paidSoFar !== null && afternoonStart !== null)
+    metrics.push(['Paid so far', fmtDurationShort(paidSoFar)]);
+
+  if (metrics.length) {
+    html += '<div class="result-card metrics-grid">';
+    metrics.forEach(function (m) {
+      html +=
+        '<div class="metric-cell">' +
+          '<p class="metric-cell-label">' + m[0] + '</p>' +
+          '<p class="metric-cell-val">' + m[1] + '</p>' +
+        '</div>';
+    });
+    html += '</div>';
   }
-  if (breakMins !== null) {
-    html +=
-      '<div class="metric"><p class="metric-label">Lunch break</p><p class="metric-val">' +
-      fmtDurationShort(breakMins) +
-      "</p></div>";
-  }
-  if (afternoonStart !== null) {
-    html +=
-      '<div class="metric"><p class="metric-label">Afternoon needed</p><p class="metric-val">' +
-      fmtDurationShort(remainingMins) +
-      "</p></div>";
-  }
-  if (paidSoFar !== null && afternoonStart !== null) {
-    html +=
-      '<div class="metric"><p class="metric-label">Paid so far</p><p class="metric-val">' +
-      fmtDurationShort(paidSoFar) +
-      "</p></div>";
-  }
-  html += "</div></div>";
 
   area.innerHTML = html;
 }
