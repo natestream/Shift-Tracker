@@ -7,25 +7,25 @@
 }
 
 :root {
-  --teal: #0CB5A4;
-  --teal-dim: #0AA295;
-  --teal-light: #EBF8F6;
-  --red: #E84040;
-  --red-light: #FFF0F0;
-  --amber: #F59E0B;
-  --amber-light: #FFF8E8;
-  --green-ok: #10B981;
+  --teal: #0cb5a4;
+  --teal-dim: #0aa295;
+  --teal-light: #ebf8f6;
+  --red: #e84040;
+  --red-light: #fff0f0;
+  --amber: #f59e0b;
+  --amber-light: #fff8e8;
+  --green-ok: #10b981;
 
-  --bg-page: #F0F3F8;
-  --bg-card: #FFFFFF;
-  --bg-input: #F7F9FC;
+  --bg-page: #f0f3f8;
+  --bg-card: #ffffff;
+  --bg-input: #f7f9fc;
 
-  --text-primary: #1A2233;
-  --text-secondary: #7A8BA0;
-  --text-muted: #B8C4D0;
+  --text-primary: #1a2233;
+  --text-secondary: #7a8ba0;
+  --text-muted: #b8c4d0;
 
-  --border: #E2E8F0;
-  --border-focus: #0CB5A4;
+  --border: #e2e8f0;
+  --border-focus: #0cb5a4;
 
   --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 10px rgba(0, 0, 0, 0.04);
 
@@ -38,22 +38,23 @@
 @media (prefers-color-scheme: dark) {
   :root {
     --bg-page: #141820;
-    --bg-card: #1E2430;
-    --bg-input: #252D3A;
-    --text-primary: #E8EDF4;
-    --text-secondary: #6B7A90;
-    --text-muted: #3D4D60;
-    --border: #2A3545;
-    --border-focus: #0CB5A4;
+    --bg-card: #1e2430;
+    --bg-input: #252d3a;
+    --text-primary: #e8edf4;
+    --text-secondary: #6b7a90;
+    --text-muted: #3d4d60;
+    --border: #2a3545;
+    --border-focus: #0cb5a4;
     --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 10px rgba(0, 0, 0, 0.2);
-    --teal-light: #0D2E2B;
-    --red-light: #2E1A1A;
-    --amber-light: #2E2410;
+    --teal-light: #0d2e2b;
+    --red-light: #2e1a1a;
+    --amber-light: #2e2410;
   }
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
   background: var(--bg-page);
   color: var(--text-primary);
   font-size: 15px;
@@ -120,7 +121,9 @@ body {
   cursor: pointer;
   white-space: nowrap;
   font-family: inherit;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 #reset-btn:hover {
@@ -141,7 +144,9 @@ body {
   font-size: 11px;
   cursor: pointer;
   font-family: inherit;
-  transition: color 0.15s, border-color 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s;
 }
 
 #close-btn:hover {
@@ -161,7 +166,10 @@ body {
   color: var(--text-muted);
   cursor: pointer;
   font-family: inherit;
-  transition: color 0.15s, border-color 0.15s, background 0.15s;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s;
 }
 
 #pin-btn:hover {
@@ -250,8 +258,13 @@ body {
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.35; }
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
 }
 
 .session-timer {
@@ -392,7 +405,9 @@ input[type="time"] {
   height: 34px;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
   min-width: 0;
 }
 
@@ -413,7 +428,9 @@ input[type="number"] {
   text-align: center;
   outline: none;
   font-family: inherit;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 input[type="number"]:focus {
@@ -435,7 +452,11 @@ input[type="number"]:focus {
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: color 0.15s, border-color 0.15s, background 0.15s, transform 0.08s;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    background 0.15s,
+    transform 0.08s;
 }
 
 .stamp-btn:hover {
@@ -479,7 +500,9 @@ input[type="number"]:focus {
   color: var(--text-primary);
   font-family: inherit;
   outline: none;
-  transition: border-color 0.15s, box-shadow 0.15s;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
 }
 
 .lunch-time-input:focus {
@@ -531,7 +554,10 @@ input[type="number"]:focus {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: color 0.15s, border-color 0.15s, transform 0.08s;
+  transition:
+    color 0.15s,
+    border-color 0.15s,
+    transform 0.08s;
 }
 
 .clear-btn:hover {
