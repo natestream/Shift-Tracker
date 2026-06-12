@@ -300,6 +300,8 @@ function resetAll() {
   document.getElementById("out1").value = "";
   document.getElementById("in2").value = "";
   document.getElementById("goal").value = "8";
+  var stampIn1 = document.getElementById("stamp-in1");
+  if (stampIn1) stampIn1.disabled = false;
   if (tickInterval) {
     clearInterval(tickInterval);
     tickInterval = null;
