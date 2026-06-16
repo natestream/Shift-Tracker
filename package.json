@@ -3,10 +3,14 @@
   "version": "v1.1.3",
   "description": "Shift time tracker tray app",
   "main": "main.js",
+  "author": {
+    "name": "Nate Stream",
+    "email": "nathanstream203@gmail.com"
+    },
   "scripts": {
     "start": "electron .",
-    "build": "dotenv cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder",
-    "publish": "dotenv cross-env CSC_IDENTITY_AUTO_DISCOVERY=false electron-builder -- --publish always"
+    "build": "dotenv cross-env electron-builder",
+    "publish": "dotenv cross-env electron-builder -- --publish always"
   },
   "build": {
     "appId": "com.nate.shift-tracker",
