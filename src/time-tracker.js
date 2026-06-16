@@ -1,8 +1,10 @@
 var tickInterval = null;
+var midnightCheckInterval = null;
 var STORAGE_KEY = "shift-tracker-today";
 var undoState = null;
 var undoTimer = null;
 var lastLunchState = null;
+var currentTrackedDate = null;
 
 function todayStr() {
   return new Date().toISOString().slice(0, 10);
@@ -326,6 +328,32 @@ function resetAll() {
   }
 }
 
+function checkMidnightRollover() {
+  if (currentTrackedDate === null) {
+    currentTrackedDate = todayStr();
+    return;
+  }
+  if (todayStr() === currentTrackedDate) return;
+  currentTrackedDate = todayStr();
+
+  localStorage.removeItem(STORAGE_KEY);
+  document.getElementById("in1").value = "";
+  document.getElementById("out1").value = "";
+  document.getElementById("in2").value = "";
+  document.getElementById("goal").value = "8";
+  var stampIn1 = document.getElementById("stamp-in1");
+  if (stampIn1) stampIn1.disabled = false;
+
+  undoState = null;
+  if (undoTimer) {
+    clearTimeout(undoTimer);
+    undoTimer = null;
+  }
+  restoreResetButton();
+
+  calc();
+}
+
 function calc() {
   saveState();
 
@@ -459,6 +487,10 @@ function calc() {
 window.addEventListener("DOMContentLoaded", function () {
   loadState();
   calc();
+  currentTrackedDate = todayStr();
+
+  if (midnightCheckInterval) clearInterval(midnightCheckInterval);
+  midnightCheckInterval = setInterval(checkMidnightRollover, 30000);
 
   document.addEventListener("keydown", function (e) {
     if (!e.altKey) return;
