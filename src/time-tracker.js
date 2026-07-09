@@ -180,6 +180,13 @@ function setLunchEndTime(value) {
   render();
 }
 
+function clearLunch() {
+  state.lunchStartTime = null;
+  state.lunchEndTime = null;
+  saveState();
+  render();
+}
+
 async function requestReset() {
   var confirmed = window.electronAPI
     ? await window.electronAPI.confirmResetDay()
@@ -253,7 +260,8 @@ function renderLunchContainer(lunchActive, lunchMinutesTotal) {
       '<span class="lunch-dash">–</span>' +
       '<input type="time" class="lunch-time-input" value="' +
       fmtInputTime(state.lunchEndTime) +
-      '" onchange="setLunchEndTime(this.value)" />';
+      '" onchange="setLunchEndTime(this.value)" />' +
+      '<button class="btn-secondary btn-sm cancel-x-btn lunch-clear-btn" onclick="clearLunch()" title="Remove lunch break">✕</button>';
   }
 }
 
