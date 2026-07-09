@@ -126,6 +126,21 @@ body {
   background: var(--amber);
 }
 
+.status-dot.lunch {
+  background: var(--amber);
+  animation: st-dot-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes st-dot-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
 .brand-name {
   font-size: 14px;
   font-weight: 600;
@@ -143,7 +158,7 @@ body {
 .pin-pill {
   border: none;
   padding: 5px 11px;
-  border-radius: var(--r-pill);
+  border-radius: var(--r-input);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
@@ -156,11 +171,17 @@ body {
 }
 
 .pin-pill:hover {
-  opacity: 0.85;
+  background: var(--teal);
+  color: #ffffff;
 }
 
 .pin-pill.pinned {
   background: var(--teal);
+  color: #ffffff;
+}
+
+.pin-pill.pinned:hover {
+  background: var(--teal-dim);
   color: #ffffff;
 }
 
@@ -330,47 +351,11 @@ body {
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  background: var(--teal-light);
-  border-radius: var(--r-input);
-  padding: 10px 14px;
+  height: 40px;
 }
 
-.goal-row-label {
-  font-size: 13px;
-  color: var(--text-primary);
-  font-weight: 500;
-}
-
-.stepper,
-.goal-stepper-inline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.stepper button,
-.goal-stepper-inline button {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1px solid var(--teal);
-  background: var(--bg-card);
-  color: var(--teal-dim);
-  font-size: 15px;
-  line-height: 1;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
+.goal-row-centered {
   justify-content: center;
-  font-family: inherit;
-}
-
-.stepper-val {
-  font-size: 13px;
-  color: var(--text-primary);
-  font-weight: 600;
-  min-width: 34px;
-  text-align: center;
 }
 
 /* ── Active state ── */
@@ -437,6 +422,26 @@ body {
   color: var(--amber);
 }
 
+.hero-time.paused {
+  color: var(--amber);
+}
+
+.hero-paused-banner {
+  margin-top: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--amber-light);
+  color: var(--amber);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.3px;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: var(--r-pill);
+  animation: st-dot-pulse 1.4s ease-in-out infinite;
+}
+
 .hero-remaining {
   margin-top: 8px;
   display: inline-block;
@@ -485,6 +490,16 @@ body {
   background: var(--amber);
 }
 
+.progress-fill.paused {
+  background: repeating-linear-gradient(
+    135deg,
+    var(--amber),
+    var(--amber) 8px,
+    var(--amber-light) 8px,
+    var(--amber-light) 16px
+  );
+}
+
 .section-divider {
   height: 1px;
   background: var(--border);
@@ -495,6 +510,7 @@ body {
   display: flex;
   gap: 8px;
   margin-bottom: 14px;
+  height: 40px;
 }
 
 .lunch-container {
@@ -507,6 +523,7 @@ body {
 
 .lunch-btn {
   flex: 1;
+  height: 100%;
   padding: 11px 10px;
   border-radius: var(--r-input);
   border: 1px solid var(--border);
@@ -521,6 +538,16 @@ body {
   gap: 6px;
   font-family: inherit;
   white-space: nowrap;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.lunch-btn:hover {
+  border-color: var(--amber);
+  background: var(--amber);
+  color: #ffffff;
 }
 
 .lunch-btn.active {
@@ -560,23 +587,53 @@ body {
 }
 
 .goal-stepper-inline {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
   border: 1px solid var(--border);
   border-radius: var(--r-input);
-  padding: 0 6px;
+  overflow: hidden;
+  height: 100%;
 }
 
 .goal-stepper-inline button {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 100%;
+  border-radius: 0;
   border: none;
   background: none;
   color: var(--teal-dim);
   font-size: 14px;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.goal-stepper-inline button:first-child {
+  border-right: 1px solid var(--border);
+}
+
+.goal-stepper-inline button:last-child {
+  border-left: 1px solid var(--border);
+}
+
+.goal-stepper-inline button:hover {
+  background: var(--teal);
+  color: #ffffff;
 }
 
 .goal-stepper-inline span {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 10px;
+  width: 68px;
   font-size: 12px;
+  text-align: center;
   color: var(--text-secondary);
   white-space: nowrap;
 }

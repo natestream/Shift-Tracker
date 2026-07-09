@@ -267,7 +267,7 @@ function render() {
   document.getElementById("idle-actions").style.display = state.manualEntryOpen ? "none" : "block";
   document.getElementById("manual-time").value = manualTimeValue;
 
-  document.getElementById("goal-label-idle").textContent = goalLabel();
+  document.getElementById("goal-label-idle").textContent = goalLabel() + " goal";
   document.getElementById("goal-label-active").textContent = goalLabel() + " goal";
   document.getElementById("goal-label-inline").textContent = goalLabel() + " goal";
 
@@ -291,8 +291,9 @@ function render() {
   var isOvertime = elapsedMinutes >= goalMinutes;
 
   var statusDot = document.getElementById("status-dot");
-  statusDot.classList.toggle("active", state.clockedIn && !isOvertime);
-  statusDot.classList.toggle("overtime", state.clockedIn && isOvertime);
+  statusDot.classList.toggle("active", state.clockedIn && !isOvertime && !lunchActive);
+  statusDot.classList.toggle("overtime", state.clockedIn && isOvertime && !lunchActive);
+  statusDot.classList.toggle("lunch", state.clockedIn && lunchActive);
 
   if (state.clockedIn) {
     document.getElementById("clockin-row-display").style.display = state.editClockInOpen ? "none" : "flex";
@@ -307,18 +308,23 @@ function render() {
     }
     var heroTime = document.getElementById("hero-time");
     heroTime.textContent = clockOutLabel;
-    heroTime.classList.toggle("overtime", isOvertime);
+    heroTime.classList.toggle("overtime", isOvertime && !lunchActive);
+    heroTime.classList.toggle("paused", lunchActive);
 
     var remaining = document.getElementById("hero-remaining");
     remaining.textContent = isOvertime
       ? fmtDuration(elapsedMinutes - goalMinutes) + " overtime"
       : fmtDuration(remainingMinutes) + " remaining";
-    remaining.classList.toggle("overtime", isOvertime);
+    remaining.classList.toggle("overtime", isOvertime && !lunchActive);
+    remaining.style.display = lunchActive ? "none" : "inline-block";
 
-    document.getElementById("worked-label").textContent = fmtDuration(elapsedMinutes) + " worked";
+    document.getElementById("hero-paused-banner").style.display = lunchActive ? "inline-flex" : "none";
+
+    document.getElementById("worked-label").textContent = fmtDuration(elapsedMinutes) + " worked" + (lunchActive ? " (paused)" : "");
     var fill = document.getElementById("progress-fill");
     fill.style.width = progressPct + "%";
-    fill.classList.toggle("overtime", isOvertime);
+    fill.classList.toggle("overtime", isOvertime && !lunchActive);
+    fill.classList.toggle("paused", lunchActive);
 
     renderLunchContainer(lunchActive, lunchMinutesTotal);
 

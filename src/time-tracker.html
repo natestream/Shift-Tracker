@@ -41,12 +41,15 @@
 
         <div class="divider"></div>
 
-        <div class="goal-row">
-          <span class="goal-row-label">Daily goal</span>
-          <div class="stepper">
-            <button onclick="decGoal()">–</button>
-            <span id="goal-label-idle" class="stepper-val">8h</span>
-            <button onclick="incGoal()">+</button>
+        <div class="goal-row goal-row-centered">
+          <div class="goal-stepper-inline">
+            <button onclick="decGoal()" aria-label="Decrease goal">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="6" x2="10" y2="6" /></svg>
+            </button>
+            <span id="goal-label-idle">8h goal</span>
+            <button onclick="incGoal()" aria-label="Increase goal">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10" /><line x1="2" y1="6" x2="10" y2="6" /></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -67,6 +70,7 @@
           <div class="hero-label">Leave at</div>
           <div class="hero-time" id="hero-time">--:--</div>
           <div class="hero-remaining" id="hero-remaining"></div>
+          <div class="hero-paused-banner" id="hero-paused-banner" style="display: none">Lunch Break | Shift Paused</div>
         </div>
 
         <div class="progress-section">
@@ -82,9 +86,13 @@
         <div class="controls-row">
           <div id="lunch-container" class="lunch-container"></div>
           <div class="goal-stepper-inline">
-            <button onclick="decGoal()">–</button>
+            <button onclick="decGoal()" aria-label="Decrease goal">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="6" x2="10" y2="6" /></svg>
+            </button>
             <span id="goal-label-inline">8h goal</span>
-            <button onclick="incGoal()">+</button>
+            <button onclick="incGoal()" aria-label="Increase goal">
+              <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10" /><line x1="2" y1="6" x2="10" y2="6" /></svg>
+            </button>
           </div>
         </div>
 
