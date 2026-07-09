@@ -52,6 +52,227 @@ function parseInputTime(str, base) {
   return d;
 }
 
+function pad2(n) {
+  return String(n).padStart(2, "0");
+}
+
+// ── Custom time picker (replaces native <input type="time">, whose dropdown can't be styled) ──
+var tpInstances = {};
+
+function fmtTimeDisplay(value) {
+  var parts = value.split(":").map(Number);
+  var h = parts[0],
+    m = parts[1];
+  var ap = h >= 12 ? "PM" : "AM";
+  var h12 = h % 12;
+  if (h12 === 0) h12 = 12;
+  return h12 + ":" + pad2(m) + " " + ap;
+}
+
+function buildTimePickerHTML(id, value, open) {
+  var parts = value.split(":").map(Number);
+  var h24 = parts[0],
+    m = parts[1];
+  var ap = h24 >= 12 ? "PM" : "AM";
+  var h12 = h24 % 12;
+  if (h12 === 0) h12 = 12;
+
+  var hoursHtml = "";
+  for (var hh = 1; hh <= 12; hh++) {
+    hoursHtml += '<div class="tp-option' + (hh === h12 ? " selected" : "") + '" onclick="tpSelectHour(\'' + id + "'," + hh + ')">' + hh + "</div>";
+  }
+  var minsHtml = "";
+  for (var mm = 0; mm < 60; mm++) {
+    minsHtml += '<div class="tp-option' + (mm === m ? " selected" : "") + '" onclick="tpSelectMinute(\'' + id + "'," + mm + ')">' + pad2(mm) + "</div>";
+  }
+  var ampmHtml =
+    '<div class="tp-option' + (ap === "AM" ? " selected" : "") + "\" onclick=\"tpSelectAmPm('" + id + "','AM')\">AM</div>" +
+    '<div class="tp-option' + (ap === "PM" ? " selected" : "") + "\" onclick=\"tpSelectAmPm('" + id + "','PM')\">PM</div>";
+
+  return (
+    '<div class="time-picker-trigger"><input type="text" class="tp-input" id="' +
+    id +
+    '-label" value="' +
+    fmtTimeDisplay(value) +
+    '" autocomplete="off" onfocus="this.select()" onkeydown="tpInputKeydown(event,\'' +
+    id +
+    '\')" onblur="tpCommitTyped(\'' +
+    id +
+    '\',this.value)" /><button type="button" class="tp-caret-btn" onclick="toggleTimePicker(\'' +
+    id +
+    '\')"><svg class="tp-caret" viewBox="0 0 10 6" width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>' +
+    (open
+      ? '<div class="time-picker-panel"><div class="tp-col" id="' +
+        id +
+        '-hours">' +
+        hoursHtml +
+        '</div><div class="tp-col" id="' +
+        id +
+        '-mins">' +
+        minsHtml +
+        '</div><div class="tp-col tp-ampm">' +
+        ampmHtml +
+        "</div></div>"
+      : "")
+  );
+}
+
+function initTimePicker(container, id, value, onChange) {
+  tpInstances[id] = { value: value, onChange: onChange, container: container, open: false };
+  renderTimePickerDOM(id);
+}
+
+function renderTimePickerDOM(id) {
+  var inst = tpInstances[id];
+  if (!inst) return;
+  inst.container.classList.toggle("open", inst.open);
+  inst.container.innerHTML = buildTimePickerHTML(id, inst.value, inst.open);
+  if (inst.open) {
+    scrollSelectedIntoView(id);
+    var panel = inst.container.querySelector(".time-picker-panel");
+    if (panel) {
+      var rect = inst.container.getBoundingClientRect();
+      if (rect.bottom + panel.offsetHeight + 8 > window.innerHeight) {
+        panel.classList.add("flip-up");
+      }
+    }
+  }
+}
+
+function scrollSelectedIntoView(id) {
+  ["-hours", "-mins"].forEach(function (suf) {
+    var col = document.getElementById(id + suf);
+    if (!col) return;
+    var sel = col.querySelector(".selected");
+    if (sel) sel.scrollIntoView({ block: "center" });
+  });
+}
+
+var tpSuppressNextDocClick = false;
+
+function toggleTimePicker(id) {
+  tpSuppressNextDocClick = true;
+  Object.keys(tpInstances).forEach(function (key) {
+    if (key !== id && tpInstances[key].open) {
+      tpInstances[key].open = false;
+      renderTimePickerDOM(key);
+    }
+  });
+  var inst = tpInstances[id];
+  inst.open = !inst.open;
+  renderTimePickerDOM(id);
+}
+
+function closeAllTimePickers() {
+  Object.keys(tpInstances).forEach(function (key) {
+    if (tpInstances[key].open) {
+      tpInstances[key].open = false;
+      renderTimePickerDOM(key);
+    }
+  });
+}
+
+function syncTimePicker(id, value) {
+  var inst = tpInstances[id];
+  if (!inst || inst.value === value) return;
+  inst.value = value;
+  if (!inst.open) renderTimePickerDOM(id);
+}
+
+function to24(h12, ap) {
+  var h = h12 % 12;
+  if (ap === "PM") h += 12;
+  return h;
+}
+
+function setTimePickerValue(id, h24, m) {
+  tpSuppressNextDocClick = true;
+  var inst = tpInstances[id];
+  var value = pad2(h24) + ":" + pad2(m);
+  inst.value = value;
+  renderTimePickerDOM(id);
+  inst.onChange(value);
+}
+
+function parseTypedTime(raw, currentValue) {
+  var s = (raw || "").trim().toLowerCase().replace(/\s+/g, "");
+  if (!s) return null;
+  var m = s.match(/^(\d{1,2}):?(\d{2})?(am|pm|a|p)?$/);
+  if (!m) return null;
+  var h = parseInt(m[1], 10);
+  var min = m[2] ? parseInt(m[2], 10) : 0;
+  if (min > 59) return null;
+  var apStr = m[3];
+  if (apStr) {
+    if (h < 1 || h > 12) return null;
+    var ap = apStr[0] === "p" ? "PM" : "AM";
+    return { h24: to24(h, ap), m: min };
+  }
+  if (h < 0 || h > 23) return null;
+  if (h >= 1 && h <= 12) {
+    var curParts = currentValue.split(":").map(Number);
+    var curAp = curParts[0] >= 12 ? "PM" : "AM";
+    return { h24: to24(h, curAp), m: min };
+  }
+  return { h24: h, m: min };
+}
+
+function tpCommitTyped(id, raw) {
+  var inst = tpInstances[id];
+  if (!inst) return;
+  var parsed = parseTypedTime(raw, inst.value);
+  if (!parsed) {
+    renderTimePickerDOM(id);
+    return;
+  }
+  setTimePickerValue(id, parsed.h24, parsed.m);
+}
+
+function tpInputKeydown(e, id) {
+  if (e.key === "Enter") {
+    e.preventDefault();
+    e.target.blur();
+  } else if (e.key === "Escape") {
+    e.preventDefault();
+    renderTimePickerDOM(id);
+  }
+}
+
+function tpSelectHour(id, h12) {
+  var inst = tpInstances[id];
+  var parts = inst.value.split(":").map(Number);
+  var ap = parts[0] >= 12 ? "PM" : "AM";
+  setTimePickerValue(id, to24(h12, ap), parts[1]);
+}
+
+function tpSelectMinute(id, m) {
+  var inst = tpInstances[id];
+  var parts = inst.value.split(":").map(Number);
+  setTimePickerValue(id, parts[0], m);
+}
+
+function tpSelectAmPm(id, ap) {
+  var inst = tpInstances[id];
+  var parts = inst.value.split(":").map(Number);
+  var h12 = parts[0] % 12;
+  if (h12 === 0) h12 = 12;
+  setTimePickerValue(id, to24(h12, ap), parts[1]);
+}
+
+document.addEventListener("click", function (e) {
+  if (tpSuppressNextDocClick) {
+    tpSuppressNextDocClick = false;
+    return;
+  }
+  Object.keys(tpInstances).forEach(function (key) {
+    var inst = tpInstances[key];
+    if (inst.open && !inst.container.contains(e.target)) {
+      inst.open = false;
+      renderTimePickerDOM(key);
+    }
+  });
+});
+
 function goalLabel() {
   var g = state.goalHours;
   return (Number.isInteger(g) ? g : g.toFixed(1)) + "h";
@@ -106,11 +327,13 @@ function clockInNow() {
 function openManualEntry() {
   state.manualEntryOpen = true;
   manualTimeValue = fmtInputTime(new Date());
+  syncTimePicker("manual-time", manualTimeValue);
   render();
 }
 
 function cancelManualEntry() {
   state.manualEntryOpen = false;
+  closeAllTimePickers();
   render();
 }
 
@@ -122,6 +345,7 @@ function confirmManualClockIn() {
   state.clockedIn = true;
   state.clockInTime = parseInputTime(manualTimeValue, new Date());
   state.manualEntryOpen = false;
+  closeAllTimePickers();
   saveState();
   render();
 }
@@ -129,17 +353,20 @@ function confirmManualClockIn() {
 function openEditClockIn() {
   state.editClockInOpen = true;
   manualTimeValue = fmtInputTime(state.clockInTime || new Date());
+  syncTimePicker("edit-clockin-time", manualTimeValue);
   render();
 }
 
 function cancelEditClockIn() {
   state.editClockInOpen = false;
+  closeAllTimePickers();
   render();
 }
 
 function confirmEditClockIn() {
   state.clockInTime = parseInputTime(manualTimeValue, state.clockInTime || new Date());
   state.editClockInOpen = false;
+  closeAllTimePickers();
   saveState();
   render();
 }
@@ -226,13 +453,8 @@ function renderLunchContainer(lunchActive, lunchMinutesTotal) {
   var lunchState = !state.lunchStartTime ? "none" : lunchActive ? "active" : "done";
 
   if (lunchState === lastLunchRenderState) {
-    var inputs = container.querySelectorAll(".lunch-time-input");
-    if (state.lunchStartTime && inputs[0] && document.activeElement !== inputs[0]) {
-      inputs[0].value = fmtInputTime(state.lunchStartTime);
-    }
-    if (state.lunchEndTime && inputs[1] && document.activeElement !== inputs[1]) {
-      inputs[1].value = fmtInputTime(state.lunchEndTime);
-    }
+    if (state.lunchStartTime) syncTimePicker("lunch-start", fmtInputTime(state.lunchStartTime));
+    if (state.lunchEndTime) syncTimePicker("lunch-end", fmtInputTime(state.lunchEndTime));
     var btn = container.querySelector(".lunch-btn");
     if (btn && lunchState === "active") {
       btn.textContent = "End Lunch (" + fmtDuration(lunchMinutesTotal) + ")";
@@ -246,22 +468,19 @@ function renderLunchContainer(lunchActive, lunchMinutesTotal) {
       '<button class="lunch-btn" onclick="toggleLunch()" title="Start lunch break (Alt+L)">Start Lunch <span class="shortcut-hint">Alt+L</span></button>';
   } else if (lunchState === "active") {
     container.innerHTML =
-      '<input type="time" class="lunch-time-input" value="' +
-      fmtInputTime(state.lunchStartTime) +
-      '" onchange="setLunchStartTime(this.value)" />' +
+      '<div id="lunch-start" class="time-picker lunch-time-input"></div>' +
       '<button class="lunch-btn active" onclick="toggleLunch()" title="End lunch break (Alt+L)">End Lunch (' +
       fmtDuration(lunchMinutesTotal) +
       ")</button>";
+    initTimePicker(document.getElementById("lunch-start"), "lunch-start", fmtInputTime(state.lunchStartTime), setLunchStartTime);
   } else {
     container.innerHTML =
-      '<input type="time" class="lunch-time-input" value="' +
-      fmtInputTime(state.lunchStartTime) +
-      '" onchange="setLunchStartTime(this.value)" />' +
+      '<div id="lunch-start" class="time-picker lunch-time-input"></div>' +
       '<span class="lunch-dash">–</span>' +
-      '<input type="time" class="lunch-time-input" value="' +
-      fmtInputTime(state.lunchEndTime) +
-      '" onchange="setLunchEndTime(this.value)" />' +
+      '<div id="lunch-end" class="time-picker lunch-time-input"></div>' +
       '<button class="btn-secondary btn-sm cancel-x-btn lunch-clear-btn" onclick="clearLunch()" title="Remove lunch break">✕</button>';
+    initTimePicker(document.getElementById("lunch-start"), "lunch-start", fmtInputTime(state.lunchStartTime), setLunchStartTime);
+    initTimePicker(document.getElementById("lunch-end"), "lunch-end", fmtInputTime(state.lunchEndTime), setLunchEndTime);
   }
 }
 
@@ -273,7 +492,7 @@ function render() {
 
   document.getElementById("manual-entry").style.display = state.manualEntryOpen ? "flex" : "none";
   document.getElementById("idle-actions").style.display = state.manualEntryOpen ? "none" : "block";
-  document.getElementById("manual-time").value = manualTimeValue;
+  syncTimePicker("manual-time", manualTimeValue);
 
   document.getElementById("goal-label-idle").textContent = goalLabel() + " goal";
   document.getElementById("goal-label-active").textContent = goalLabel() + " goal";
@@ -306,7 +525,7 @@ function render() {
   if (state.clockedIn) {
     document.getElementById("clockin-row-display").style.display = state.editClockInOpen ? "none" : "flex";
     document.getElementById("clockin-row-edit").style.display = state.editClockInOpen ? "flex" : "none";
-    document.getElementById("edit-clockin-time").value = manualTimeValue;
+    syncTimePicker("edit-clockin-time", manualTimeValue);
     document.getElementById("clockin-time-label").textContent = fmtClock(state.clockInTime);
 
     var clockOutLabel = "--:--";
@@ -347,6 +566,9 @@ function render() {
 }
 
 window.addEventListener("DOMContentLoaded", function () {
+  initTimePicker(document.getElementById("manual-time"), "manual-time", fmtInputTime(new Date()), setManualTime);
+  initTimePicker(document.getElementById("edit-clockin-time"), "edit-clockin-time", fmtInputTime(new Date()), setManualTime);
+
   loadState();
   currentTrackedDate = todayStr();
   render();

@@ -24,7 +24,7 @@
         <div class="idle-hint">Ready when you are</div>
 
         <div id="manual-entry" class="manual-entry" style="display: none">
-          <input type="time" id="manual-time" oninput="setManualTime(this.value)" />
+          <div id="manual-time" class="time-picker time-picker-lg"></div>
           <div class="manual-actions">
             <button class="btn-primary" onclick="confirmManualClockIn()">Confirm</button>
             <button class="btn-secondary cancel-x-btn" onclick="cancelManualEntry()">Cancel</button>
@@ -61,7 +61,7 @@
           <button class="edit-clockin-btn" onclick="openEditClockIn()">Edit</button>
         </div>
         <div id="clockin-row-edit" class="clockin-edit" style="display: none">
-          <input type="time" id="edit-clockin-time" oninput="setManualTime(this.value)" />
+          <div id="edit-clockin-time" class="time-picker time-picker-md"></div>
           <button class="btn-primary btn-sm" onclick="confirmEditClockIn()">Save</button>
           <button class="btn-secondary btn-sm cancel-x-btn" onclick="cancelEditClockIn()">✕</button>
         </div>
