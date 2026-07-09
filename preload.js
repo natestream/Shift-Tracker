@@ -5,5 +5,6 @@ const { contextBridge, ipcRenderer } = require('electron');
 contextBridge.exposeInMainWorld('electronAPI', {
   closeWindow: () => ipcRenderer.send('hide-window'),
   updateTooltip: (text) => ipcRenderer.send('update-tooltip', text),
-  togglePin: () => ipcRenderer.invoke('toggle-pin')
+  togglePin: () => ipcRenderer.invoke('toggle-pin'),
+  confirmResetDay: () => ipcRenderer.invoke('confirm-reset-day')
 });

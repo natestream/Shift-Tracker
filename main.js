@@ -6,6 +6,7 @@ const {
   nativeImage,
   screen,
   ipcMain,
+  dialog,
 } = require("electron");
 
 Menu.setApplicationMenu(null);
@@ -25,6 +26,20 @@ ipcMain.handle("toggle-pin", () => {
   isPinned = !isPinned;
   if (win) win.setAlwaysOnTop(isPinned);
   return isPinned;
+});
+
+ipcMain.handle("confirm-reset-day", async () => {
+  if (!win) return false;
+  const result = await dialog.showMessageBox(win, {
+    type: "warning",
+    buttons: ["Cancel", "Reset Day"],
+    defaultId: 0,
+    cancelId: 0,
+    title: "Reset Day",
+    message: "Reset today's tracked day?",
+    detail: "This clears your clock-in, lunch, and progress for today. This can't be undone.",
+  });
+  return result.response === 1;
 });
 const path = require("path");
 
