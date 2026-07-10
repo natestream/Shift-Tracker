@@ -213,12 +213,12 @@ body {
 }
 
 #idle-view {
-  padding: 36px 24px 28px;
+  padding: 24px;
   height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
-  /* justify-content: center; */
+  justify-content: center;
   justify-items: center;
   text-align: center;
 }
