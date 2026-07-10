@@ -282,7 +282,6 @@ function setPinnedVisual(pinned) {
   pinnedVisual = pinned;
   var btn = document.getElementById("pin-btn");
   btn.classList.toggle("pinned", pinned);
-  btn.textContent = pinned ? "Pinned" : "Pin";
   btn.title = pinned ? "Unpin window" : "Pin window (keep visible)";
 }
 
