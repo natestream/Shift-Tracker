@@ -4,7 +4,7 @@ A lightweight Windows tray app for tracking your shift hours.
 
 ## Install
 
-1. Go to the [latest release](https://github.com/nathanstream203/Shift-Tracker/releases/latest)
+1. Go to the [latest release](https://github.com/natestream/Shift-Tracker/releases/latest)
 2. Download `Shift Tracker Setup x.x.x.exe`
 3. Run the installer
 
