@@ -50,7 +50,7 @@ let isPinned = false;
 
 // Dimensions of the popup
 const POPUP_WIDTH = 480;
-const POPUP_HEIGHT = 640;
+const POPUP_HEIGHT = 480;
 
 app.setName("Shift Tracker");
 
