@@ -3,6 +3,7 @@
   "version": "v1.2.0",
   "description": "Shift time tracker tray app",
   "main": "main.js",
+  "license": "UNLICENSED",
   "author": {
     "name": "Nate Stream",
     "email": "nathanstream203@gmail.com"
