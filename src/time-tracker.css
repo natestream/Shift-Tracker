@@ -781,6 +781,48 @@ body {
   color: #f0f3f8;
 }
 
+.reset-confirm {
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 10px 8px 12px;
+  border-radius: var(--r-input);
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+}
+
+.reset-confirm-label {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.reset-confirm-actions {
+  display: flex;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.reset-confirm-btn {
+  padding: 7px 12px;
+  border-radius: var(--r-btn);
+  border: 1px solid var(--red);
+  background: var(--red-light);
+  color: var(--red);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition:
+    background 0.15s,
+    color 0.15s;
+}
+
+.reset-confirm-btn:hover {
+  background: var(--red);
+  color: #f0f3f8;
+}
+
 .manual-entry-btn {
   width: 100%;
   margin-top: 14px;
