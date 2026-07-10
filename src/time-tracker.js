@@ -414,11 +414,19 @@ function clearLunch() {
   render();
 }
 
-async function requestReset() {
-  var confirmed = window.electronAPI
-    ? await window.electronAPI.confirmResetDay()
-    : window.confirm("Reset today's tracked day?");
-  if (!confirmed) return;
+function requestReset() {
+  document.getElementById("reset-btn").style.display = "none";
+  document.getElementById("reset-confirm").style.display = "flex";
+}
+
+function cancelReset() {
+  document.getElementById("reset-confirm").style.display = "none";
+  document.getElementById("reset-btn").style.display = "flex";
+}
+
+function confirmReset() {
+  document.getElementById("reset-confirm").style.display = "none";
+  document.getElementById("reset-btn").style.display = "flex";
 
   state.clockedIn = false;
   state.clockInTime = null;

@@ -96,7 +96,14 @@
           </div>
         </div>
 
-        <button class="reset-btn" onclick="requestReset()" title="Reset today's tracked day">Reset Day</button>
+        <button id="reset-btn" class="reset-btn" onclick="requestReset()" title="Reset today's tracked day">Reset Day</button>
+        <div id="reset-confirm" class="reset-confirm" style="display: none">
+          <span class="reset-confirm-label">Reset today's progress?</span>
+          <div class="reset-confirm-actions">
+            <button class="btn-secondary btn-sm cancel-x-btn" onclick="cancelReset()">Cancel</button>
+            <button class="reset-confirm-btn" onclick="confirmReset()">Reset</button>
+          </div>
+        </div>
       </div>
     </div>
 
