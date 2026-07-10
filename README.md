@@ -18,13 +18,12 @@ Your data saves locally and resets each day at midnight.
 
 ## Features
 
-- Stamp clock-in with "Now" or type a time manually
-- Log a lunch break (excluded from paid hours)
+- Stamp clock-in with "Clock In Now" or type a time manually
+- Log a lunch break (excluded from paid hours), with a paused indicator while on lunch
 - Live running clock toward your goal with a progress bar
 - Clock-out calculator showing the exact time you need to leave
-- Tray tooltip updates with your target clock-out time
 - Pin button to keep the window open when you click away
-- Reset day with an 8-second undo window
+- Reset day with an inline confirm before clearing your data
 
 ## Keyboard shortcuts
 
