@@ -51,7 +51,11 @@
             <button onclick="decGoal()" aria-label="Decrease goal">
               <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="6" x2="10" y2="6" /></svg>
             </button>
-            <span id="goal-label-idle">8h goal</span>
+            <div class="goal-picker" id="goal-picker-idle">
+              <div class="goal-picker-trigger" onclick="toggleGoalPicker('goal-picker-idle')">
+                <span id="goal-label-idle" style="font-weight: bold; color: #fff;">8h</span>
+              </div>
+            </div>
             <button onclick="incGoal()" aria-label="Increase goal">
               <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10" /><line x1="2" y1="6" x2="10" y2="6" /></svg>
             </button>
@@ -61,14 +65,16 @@
 
       <!-- ACTIVE STATE -->
       <div id="active-view" class="view" style="display: none">
-        <div id="clockin-row-display" class="clockin-display">
-          <span>Clocked in at <strong id="clockin-time-label">--:--</strong></span>
-          <button class="edit-clockin-btn" onclick="openEditClockIn()">Edit</button>
-        </div>
-        <div id="clockin-row-edit" class="clockin-edit" style="display: none">
-          <div id="edit-clockin-time" class="time-picker time-picker-md"></div>
-          <button class="btn-primary btn-sm" onclick="confirmEditClockIn()">Save</button>
-          <button class="btn-secondary btn-sm cancel-x-btn" onclick="cancelEditClockIn()">✕</button>
+        <div class="clockin-row">
+          <div id="clockin-row-display" class="clockin-display">
+            <span>Clocked in at <strong id="clockin-time-label">--:--</strong></span>
+            <button class="edit-clockin-btn" onclick="openEditClockIn()">Edit</button>
+          </div>
+          <div id="clockin-row-edit" class="clockin-edit" style="display: none">
+            <div id="edit-clockin-time" class="time-picker time-picker-md"></div>
+            <button class="btn-primary btn-sm" onclick="confirmEditClockIn()">Save</button>
+            <button class="btn-secondary btn-sm cancel-reset-btn" onclick="cancelEditClockIn()">Cancel</button>
+          </div>
         </div>
 
         <div class="hero">
@@ -94,7 +100,11 @@
             <button onclick="decGoal()" aria-label="Decrease goal">
               <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="2" y1="6" x2="10" y2="6" /></svg>
             </button>
-            <span id="goal-label-inline">8h goal</span>
+            <div class="goal-picker" id="goal-picker-inline">
+              <div class="goal-picker-trigger" onclick="toggleGoalPicker('goal-picker-inline')">
+                <span id="goal-label-inline" style="font-weight: bold; color: #fff;">8h</span>
+              </div>
+            </div>
             <button onclick="incGoal()" aria-label="Increase goal">
               <svg viewBox="0 0 12 12" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="6" y1="2" x2="6" y2="10" /><line x1="2" y1="6" x2="10" y2="6" /></svg>
             </button>

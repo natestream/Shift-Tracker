@@ -86,10 +86,12 @@ body {
 
 .app {
   width: 100%;
+  height: 100vh;
   background: var(--bg-card);
-  min-height: 100vh;
   position: relative;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /* ── Header ── */
@@ -100,6 +102,7 @@ body {
   padding: 14px 18px;
   border-bottom: 1px solid var(--border);
   -webkit-app-region: drag;
+  flex-shrink: 0;
 }
 
 .header-brand {
@@ -227,13 +230,20 @@ body {
 
 #idle-view {
   padding: 24px;
-  height: 100%;
+  flex: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   justify-items: center;
   text-align: center;
+}
+
+#active-view {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .idle-hint {
@@ -245,21 +255,23 @@ body {
 #idle-actions,
 .manual-entry {
   width: 100%;
+  height: 112px;
 }
 
 .manual-entry {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 14px;
   animation: st-slidein 0.18s ease;
 }
 
 .time-picker-lg {
   width: 100%;
+  height: 54px;
 }
 
 .time-picker-lg .time-picker-trigger {
-  padding: 12px 14px;
+  padding: 0 14px;
   border-color: var(--teal);
   font-size: 16px;
 }
@@ -296,6 +308,10 @@ body {
   font-size: 14px;
   cursor: pointer;
   font-family: inherit;
+  transition:
+    background 0.15s,
+    color 0.15s,
+    border-color 0.15s;
 }
 
 .btn-sm {
@@ -305,7 +321,8 @@ body {
 
 .clock-in-btn {
   width: 100%;
-  padding: 18px;
+  height: 54px;
+  padding: 0 18px;
   border-radius: 14px;
   border: none;
   background: var(--teal);
@@ -376,11 +393,17 @@ body {
   padding: 22px 22px 20px;
 }
 
+.clockin-row {
+  position: relative;
+  height: 40px;
+  margin-bottom: 12px;
+}
+
 .clockin-display {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 18px;
+  height: 100%;
   font-size: 13px;
   color: var(--text-secondary);
 }
@@ -391,17 +414,28 @@ body {
 
 .clockin-edit {
   display: flex;
+  align-items: center;
+  height: 100%;
   gap: 8px;
-  margin-bottom: 16px;
   animation: st-slidein 0.18s ease;
+}
+
+.clockin-edit .btn-sm {
+  height: 100%;
+  flex: none;
+  width: 56px;
+  padding-left: 0;
+  padding-right: 0;
+  text-align: center;
 }
 
 .time-picker-md {
   flex: 1;
+  height: 100%;
 }
 
 .time-picker-md .time-picker-trigger {
-  padding: 9px 11px;
+  padding: 0 11px;
   border-radius: 8px;
   border-color: var(--teal);
   font-size: 14px;
@@ -472,7 +506,7 @@ body {
 }
 
 .progress-section {
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .progress-labels {
@@ -516,7 +550,7 @@ body {
 .section-divider {
   height: 1px;
   background: var(--border);
-  margin-bottom: 16px;
+  margin-bottom: 14px;
 }
 
 .controls-row {
@@ -577,7 +611,7 @@ body {
 .lunch-time-input {
   flex: 1;
   min-width: 0;
-  height: 34px;
+  height: 100%;
 }
 
 .lunch-time-input .time-picker-trigger {
@@ -665,6 +699,11 @@ body {
   bottom: calc(100% + 6px);
 }
 
+.lunch-time-input .time-picker-panel {
+  top: auto;
+  bottom: calc(100% + 6px);
+}
+
 .tp-col {
   display: flex;
   flex-direction: column;
@@ -708,8 +747,8 @@ body {
 
 .lunch-clear-btn {
   flex-shrink: 0;
-  width: 32px;
-  height: 32px;
+  aspect-ratio: 1;
+  height: 100%;
   padding: 0;
   display: flex;
   align-items: center;
@@ -768,6 +807,42 @@ body {
   text-align: center;
   color: var(--text-secondary);
   white-space: nowrap;
+}
+
+.goal-picker {
+  position: relative;
+  height: 100%;
+  width: 68px;
+}
+
+.goal-picker-trigger {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.goal-picker.open .goal-picker-trigger span {
+  color: var(--teal-dim);
+}
+
+.goal-picker-panel {
+  position: fixed;
+  transform: translateX(-50%);
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  width: 56px;
+  max-height: 168px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-input);
+  box-shadow: var(--shadow-card);
+  padding: 6px;
+  scrollbar-width: thin;
+  animation: st-fade 0.15s ease;
 }
 
 .reset-btn {
@@ -867,15 +942,19 @@ body {
 }
 
 .edit-clockin-btn {
-  padding: 5px 10px;
+  height: 100%;
+  padding: 0 10px;
   border-radius: var(--r-input);
   border: 1px solid var(--border);
   background: var(--bg-card);
   color: var(--text-primary);
-  font-size: 12px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition:
     background 0.15s,
     color 0.15s,
@@ -907,6 +986,6 @@ body {
 }
 
 .cancel-reset-btn:hover {
-  background: var(--teal);
+  background: var(--red);
   color: #f0f3f8;
 }

@@ -103,16 +103,16 @@ function buildTimePickerHTML(id, value, open) {
     '\')"><svg class="tp-caret" viewBox="0 0 10 6" width="10" height="6"><path d="M1 1l4 4 4-4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button></div>' +
     (open
       ? '<div class="time-picker-panel"><div class="tp-col" id="' +
-        id +
-        '-hours">' +
-        hoursHtml +
-        '</div><div class="tp-col" id="' +
-        id +
-        '-mins">' +
-        minsHtml +
-        '</div><div class="tp-col tp-ampm">' +
-        ampmHtml +
-        "</div></div>"
+      id +
+      '-hours">' +
+      hoursHtml +
+      '</div><div class="tp-col" id="' +
+      id +
+      '-mins">' +
+      minsHtml +
+      '</div><div class="tp-col tp-ampm">' +
+      ampmHtml +
+      "</div></div>"
       : "")
   );
 }
@@ -130,7 +130,7 @@ function renderTimePickerDOM(id) {
   if (inst.open) {
     scrollSelectedIntoView(id);
     var panel = inst.container.querySelector(".time-picker-panel");
-    if (panel) {
+    if (panel && !inst.container.classList.contains("lunch-time-input")) {
       var rect = inst.container.getBoundingClientRect();
       if (rect.bottom + panel.offsetHeight + 8 > window.innerHeight) {
         panel.classList.add("flip-up");
@@ -382,6 +382,85 @@ function decGoal() {
   render();
 }
 
+var gpOpen = {};
+
+function toggleGoalPicker(pickerId) {
+  var willOpen = !gpOpen[pickerId];
+  closeAllGoalPickers();
+  if (willOpen) {
+    gpOpen[pickerId] = true;
+    renderGoalPickerPanel(pickerId);
+  }
+}
+
+function closeAllGoalPickers() {
+  Object.keys(gpOpen).forEach(function (id) {
+    if (gpOpen[id]) {
+      gpOpen[id] = false;
+      removeGoalPickerPanel(id);
+    }
+  });
+}
+
+var gpPanels = {};
+
+function renderGoalPickerPanel(pickerId) {
+  var container = document.getElementById(pickerId);
+  if (!container) return;
+  container.classList.add("open");
+  removeGoalPickerPanel(pickerId);
+  var rect = container.getBoundingClientRect();
+  var panel = document.createElement("div");
+  panel.className = "goal-picker-panel";
+  panel.style.left = rect.left + rect.width / 2 + "px";
+  panel.style.bottom = window.innerHeight - rect.top + 6 + "px";
+  for (var h = 1; h <= 16; h++) {
+    var opt = document.createElement("div");
+    opt.className = "tp-option" + (h === state.goalHours ? " selected" : "");
+    opt.textContent = h + "h";
+    opt.onclick = (function (hh) {
+      return function () {
+        selectGoalHours(hh);
+      };
+    })(h);
+    panel.appendChild(opt);
+  }
+  document.body.appendChild(panel);
+  gpPanels[pickerId] = panel;
+  var sel = panel.querySelector(".selected");
+  if (sel) sel.scrollIntoView({ block: "center" });
+}
+
+function removeGoalPickerPanel(pickerId) {
+  var container = document.getElementById(pickerId);
+  if (container) container.classList.remove("open");
+  var panel = gpPanels[pickerId];
+  if (panel) panel.remove();
+  gpPanels[pickerId] = null;
+}
+
+function selectGoalHours(hours) {
+  state.goalHours = hours;
+  saveState();
+  closeAllGoalPickers();
+  render();
+}
+
+document.addEventListener("click", function (e) {
+  Object.keys(gpOpen).forEach(function (id) {
+    if (gpOpen[id]) {
+      var container = document.getElementById(id);
+      var panel = gpPanels[id];
+      var inContainer = container && container.contains(e.target);
+      var inPanel = panel && panel.contains(e.target);
+      if (!inContainer && !inPanel) {
+        gpOpen[id] = false;
+        removeGoalPickerPanel(id);
+      }
+    }
+  });
+});
+
 function toggleLunch() {
   if (!state.lunchStartTime) {
     state.lunchStartTime = new Date();
@@ -501,9 +580,9 @@ function render() {
   document.getElementById("idle-actions").style.display = state.manualEntryOpen ? "none" : "block";
   syncTimePicker("manual-time", manualTimeValue);
 
-  document.getElementById("goal-label-idle").textContent = goalLabel() + " goal";
-  document.getElementById("goal-label-active").textContent = goalLabel() + " goal";
-  document.getElementById("goal-label-inline").textContent = goalLabel() + " goal";
+  document.getElementById("goal-label-idle").textContent = goalLabel();
+  document.getElementById("goal-label-active").textContent = goalLabel();
+  document.getElementById("goal-label-inline").textContent = goalLabel();
 
   var lunchActive = !!(state.lunchStartTime && !state.lunchEndTime);
   var lunchMinutesTotal = 0;
