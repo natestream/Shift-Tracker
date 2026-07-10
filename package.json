@@ -1,6 +1,6 @@
 {
   "name": "shift-tracker",
-  "version": "v1.2.0",
+  "version": "v1.2.1",
   "description": "Shift time tracker tray app",
   "main": "main.js",
   "license": "UNLICENSED",
